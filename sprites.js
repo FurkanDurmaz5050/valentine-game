@@ -401,7 +401,26 @@ const Sprites = {
   },
 
   // --- Draw Background ---
-  drawBackground(ctx, cameraX, theme, canvasW, canvasH) {
+  drawBackground(ctx, cameraX, theme, canvasW, canvasH, levelIndex) {
+    // Check for custom background image on current level
+    const lvl = (typeof levelIndex === 'number' && typeof LEVELS !== 'undefined') ? LEVELS[levelIndex] : null;
+    if (lvl && lvl._bgImg) {
+      // Draw custom image covering the canvas, parallax scroll
+      const img = lvl._bgImg;
+      const scale = Math.max(canvasW / img.width, canvasH / img.height);
+      const dw = img.width * scale;
+      const dh = img.height * scale;
+      const parallax = -(cameraX * 0.15) % canvasW;
+      ctx.drawImage(img, parallax, (canvasH - dh) / 2, dw, dh);
+      if (parallax + dw < canvasW) {
+        ctx.drawImage(img, parallax + dw, (canvasH - dh) / 2, dw, dh);
+      }
+      // Slight dark overlay for readability
+      ctx.fillStyle = 'rgba(0,0,0,0.15)';
+      ctx.fillRect(0, 0, canvasW, canvasH);
+      return;
+    }
+
     const t = THEMES[theme] || THEMES.istanbul;
 
     // Sky gradient

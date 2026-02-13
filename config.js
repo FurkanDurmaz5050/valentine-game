@@ -120,6 +120,18 @@ const GameConfig = (() => {
           STORY.levels[i].theme = lvl.theme;
           if (LEVELS[i]) LEVELS[i].theme = lvl.theme;
         }
+
+        // Custom background image
+        if (lvl.bgImage === null) {
+          if (LEVELS[i]) LEVELS[i]._bgImg = null;
+        } else if (lvl.bgImage) {
+          if (LEVELS[i]) {
+            const bgImg = new Image();
+            bgImg.onload = () => { LEVELS[i]._bgImg = bgImg; };
+            bgImg.onerror = () => { LEVELS[i]._bgImg = null; };
+            bgImg.src = lvl.bgImage;
+          }
+        }
       });
     }
 
@@ -242,6 +254,16 @@ const GameConfig = (() => {
             </label>
             <label class="cfg-label">Manzara Teması
               <select class="cfg-sel" data-lv="${i}" data-f="theme">${themeOpts}</select>
+            </label>
+            <label class="cfg-label">🏞️ Özel Manzara Arka Planı
+              <div class="cfg-file-row">
+                <input type="file" class="cfg-file" accept="image/*" data-lv="${i}" data-f="bgImage">
+                ${cl.bgImage ? '<button type="button" class="cfg-remove" data-lv="'+i+'" data-f="bgImage">✕</button>' : ''}
+              </div>
+              <div class="cfg-preview" data-pv="bgImage-${i}">
+                ${cl.bgImage ? '<img src="'+cl.bgImage+'" alt="">' : '<span>Varsayılan piksel manzara</span>'}
+              </div>
+              <span class="cfg-hint">Yüklerseniz piksel manzara yerine bu resim kullanılır</span>
             </label>
           </div>
         </div>`;
@@ -463,6 +485,11 @@ const GameConfig = (() => {
       const phInput = panelEl.querySelector(`.cfg-file[data-lv="${i}"][data-f="photo"]`);
       if (phInput && phInput._dataUrl) config.levels[i].photo = phInput._dataUrl;
       else if (phInput && phInput._removed) config.levels[i].photo = null;
+
+      // Level bg image
+      const bgInput = panelEl.querySelector(`.cfg-file[data-lv="${i}"][data-f="bgImage"]`);
+      if (bgInput && bgInput._dataUrl) config.levels[i].bgImage = bgInput._dataUrl;
+      else if (bgInput && bgInput._removed) config.levels[i].bgImage = null;
     }
 
     if (save(config)) {

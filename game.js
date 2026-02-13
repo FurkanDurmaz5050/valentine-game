@@ -1337,7 +1337,7 @@
     const camX = Math.floor(camera.x);
 
     // 1. Background
-    Sprites.drawBackground(ctx, camX, theme, RENDER_W, RENDER_H);
+    Sprites.drawBackground(ctx, camX, theme, RENDER_W, RENDER_H, currentLevel);
 
     // 2. World space rendering
     ctx.save();
