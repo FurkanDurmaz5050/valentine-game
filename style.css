@@ -1,0 +1,687 @@
+/* ============================================================
+   style.css — Professional Valentine's Game UI
+   ============================================================
+   Features: Smooth overlay transitions, glass-morphism HUD,
+   better typography, refined animations, mobile-optimized
+   ============================================================ */
+
+/* ── Reset & Base ─────────────────────────────────────────── */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #0A0515;
+  font-family: 'Press Start 2P', monospace;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ── Game Container ───────────────────────────────────────── */
+#game-container {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: #0A0515;
+}
+
+#game-canvas {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  border-radius: 4px;
+  box-shadow:
+    0 0 30px rgba(255, 20, 147, 0.15),
+    0 0 60px rgba(255, 20, 147, 0.08),
+    0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* ── Transition Overlay ───────────────────────────────────── */
+#transition-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(ellipse at center, #1a0a2e, #0a0515);
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+#transition-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ── Shared Pixel Button ──────────────────────────────────── */
+.pixel-btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  padding: 14px 28px;
+  background: linear-gradient(180deg, #FF4466 0%, #CC2244 100%);
+  color: white;
+  border: none;
+  cursor: pointer;
+  text-shadow: 0 2px 0 rgba(0,0,0,0.3);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.25),
+    inset 0 -3px 0 rgba(0,0,0,0.2),
+    0 4px 0 #991133,
+    0 6px 12px rgba(0,0,0,0.4);
+  border-radius: 4px;
+  transition: all 0.1s ease;
+  position: relative;
+  top: 0;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.pixel-btn.visible {
+  pointer-events: auto;
+  opacity: 1;
+  transform: translateY(0);
+  animation: buttonPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.pixel-btn:hover {
+  background: linear-gradient(180deg, #FF5577 0%, #DD3355 100%);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.3),
+    inset 0 -3px 0 rgba(0,0,0,0.2),
+    0 4px 0 #AA2244,
+    0 6px 14px rgba(255,20,147,0.3);
+}
+
+.pixel-btn:active {
+  top: 3px;
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.15),
+    inset 0 -1px 0 rgba(0,0,0,0.2),
+    0 1px 0 #991133,
+    0 2px 6px rgba(0,0,0,0.4);
+}
+
+/* ── Loading Screen ───────────────────────────────────────── */
+#loading-screen {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: radial-gradient(ellipse at center, #1a0a2e 0%, #0A0515 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  transition: opacity 0.6s ease;
+}
+
+.loading-heart {
+  font-size: 48px;
+  animation: heartPulse 0.8s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(255, 20, 147, 0.6));
+}
+
+.loading-text {
+  color: #FFB6C1;
+  font-size: 12px;
+  margin-top: 20px;
+  animation: blink 1.2s ease-in-out infinite;
+  text-shadow: 0 0 10px rgba(255, 182, 193, 0.5);
+}
+
+.loading-bar-container {
+  width: 200px;
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 3px;
+  margin-top: 16px;
+  overflow: hidden;
+}
+
+.loading-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #FF1493, #FF69B4, #FFD700);
+  border-radius: 3px;
+  animation: loadingProgress 1.5s ease-out forwards;
+}
+
+/* ── Overlay Base (All overlays use opacity transitions) ──── */
+#title-screen,
+#level-intro,
+#memory-card,
+#finale {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 20;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+#title-screen.active,
+#level-intro.active,
+#memory-card.active,
+#finale.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ── Title Screen ─────────────────────────────────────────── */
+#title-screen {
+  text-align: center;
+  z-index: 25;
+}
+
+.title-content {
+  position: relative;
+  z-index: 2;
+}
+
+.game-title {
+  font-size: 22px;
+  color: #FF4466;
+  text-shadow:
+    0 0 20px rgba(255, 68, 102, 0.6),
+    0 0 40px rgba(255, 68, 102, 0.3),
+    0 3px 0 #CC2244;
+  animation: glowPulse 2s ease-in-out infinite;
+  margin-bottom: 10px;
+}
+
+.game-subtitle {
+  font-size: 9px;
+  color: #FFB6C1;
+  margin-bottom: 30px;
+  animation: fadeIn 1s ease-out 0.5s both;
+  text-shadow: 0 0 10px rgba(255, 182, 193, 0.4);
+}
+
+#control-hint {
+  font-size: 7px;
+  color: rgba(255, 182, 193, 0.5);
+  margin-top: 20px;
+  animation: fadeIn 1s ease-out 1.5s both;
+}
+
+/* Hearts Rain */
+.hearts-rain {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.heart-drop {
+  position: absolute;
+  top: -30px;
+  animation: heartFall linear infinite;
+  opacity: 0.5;
+  filter: blur(0.5px);
+}
+
+/* ── Level Intro ──────────────────────────────────────────── */
+#level-intro {
+  background: radial-gradient(ellipse at center, rgba(20, 5, 40, 0.95), rgba(10, 5, 21, 0.98));
+}
+
+.level-intro-content {
+  text-align: center;
+  animation: zoomIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#progress-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.progress-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 182, 193, 0.2);
+  border: 1px solid rgba(255, 182, 193, 0.3);
+  transition: all 0.3s ease;
+}
+
+.progress-dot.active {
+  background: #FF69B4;
+  border-color: #FF69B4;
+  box-shadow: 0 0 8px rgba(255, 105, 180, 0.5);
+}
+
+.progress-dot.current {
+  background: #FF1493;
+  border-color: #FF1493;
+  box-shadow: 0 0 12px rgba(255, 20, 147, 0.7);
+  animation: dotPulse 1.2s ease-in-out infinite;
+}
+
+.level-chapter {
+  font-size: 8px;
+  color: #FF69B4;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  text-shadow: 0 0 10px rgba(255, 105, 180, 0.4);
+}
+
+.level-title {
+  font-size: 18px;
+  color: #FFD700;
+  text-shadow:
+    0 0 15px rgba(255, 215, 0, 0.5),
+    0 2px 0 #B8960F;
+  margin-bottom: 8px;
+}
+
+.level-subtitle {
+  font-size: 8px;
+  color: #FFB6C1;
+  opacity: 0;
+  animation: fadeIn 0.8s ease-out 0.5s forwards;
+  text-shadow: 0 0 8px rgba(255, 182, 193, 0.3);
+}
+
+/* ── Memory Card ──────────────────────────────────────────── */
+#memory-card {
+  background: radial-gradient(ellipse at center, rgba(20, 5, 40, 0.96), rgba(10, 5, 21, 0.99));
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.memory-card-content {
+  max-width: 340px;
+  width: 90%;
+  text-align: center;
+  padding: 15px;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.memory-photo-frame {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto 15px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 3px rgba(255, 105, 180, 0.4),
+    0 0 20px rgba(255, 20, 147, 0.2),
+    0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+.memory-photo-frame::before {
+  content: '';
+  position: absolute;
+  top: -2px; left: -2px; right: -2px; bottom: -2px;
+  border-radius: 14px;
+  background: linear-gradient(45deg, #FF1493, #FF69B4, #FFD700, #FF1493);
+  z-index: -1;
+  animation: borderGlow 3s linear infinite;
+  background-size: 300% 300%;
+}
+
+#memory-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#memory-photo-placeholder {
+  display: none;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1a0a2e, #2a1a4e);
+  justify-content: center;
+  align-items: center;
+  font-size: 50px;
+}
+
+.memory-title {
+  font-size: 12px;
+  color: #FF69B4;
+  margin-bottom: 10px;
+  text-shadow: 0 0 10px rgba(255, 105, 180, 0.4);
+}
+
+.memory-text {
+  font-size: 8px;
+  color: #DDA0DD;
+  line-height: 2;
+  margin-bottom: 18px;
+  text-align: center;
+  text-shadow: 0 0 5px rgba(221, 160, 221, 0.2);
+}
+
+/* ── Finale ───────────────────────────────────────────────── */
+#finale {
+  background: radial-gradient(ellipse at center, rgba(20, 5, 40, 0.97), rgba(10, 5, 21, 0.99));
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.finale-content {
+  max-width: 360px;
+  width: 90%;
+  text-align: center;
+  padding: 20px 15px;
+  animation: fadeInUp 1.5s ease-out;
+  position: relative;
+  z-index: 2;
+}
+
+.finale-title {
+  font-size: 16px;
+  color: #FF4466;
+  margin-bottom: 5px;
+  text-shadow:
+    0 0 20px rgba(255, 68, 102, 0.5),
+    0 2px 0 #CC2244;
+  animation: glowPulse 2.5s ease-in-out infinite;
+}
+
+.finale-subtitle {
+  font-size: 8px;
+  color: #FFD700;
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+}
+
+.finale-letter {
+  font-size: 8px;
+  line-height: 2.2;
+  color: #FFB6C1;
+  text-align: left;
+  white-space: pre-line;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 105, 180, 0.15);
+  border-radius: 8px;
+  padding: 18px;
+  margin-bottom: 20px;
+  box-shadow:
+    inset 0 0 20px rgba(255, 20, 147, 0.05),
+    0 4px 20px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 0 5px rgba(255, 182, 193, 0.15);
+}
+
+.finale-hearts-rain {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── HUD ──────────────────────────────────────────────────── */
+#hud {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, transparent 100%);
+  z-index: 15;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  color: #fff;
+  pointer-events: none;
+}
+
+#hud-level {
+  color: #FFB6C1;
+  font-size: 7px;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+
+.hud-right {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+#hearts-count {
+  color: #FF69B4;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+
+#hearts-count::before {
+  content: '❤ ';
+}
+
+#hud-score {
+  color: #FFD700;
+  font-size: 7px;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+
+/* ── Touch Controls ───────────────────────────────────────── */
+#touch-controls {
+  display: none;
+  position: absolute;
+  bottom: 15px;
+  left: 0; right: 0;
+  z-index: 30;
+  padding: 0 15px;
+  justify-content: space-between;
+  align-items: flex-end;
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
+}
+
+.touch-dpad {
+  display: flex;
+  gap: 10px;
+  pointer-events: auto;
+}
+
+.touch-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 105, 180, 0.5);
+  background: rgba(255, 20, 147, 0.15);
+  color: white;
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  touch-action: manipulation;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: all 0.1s ease;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.touch-btn:active,
+.touch-btn.pressed {
+  background: rgba(255, 20, 147, 0.45);
+  border-color: rgba(255, 105, 180, 0.8);
+  transform: scale(0.92);
+  box-shadow: 0 0 15px rgba(255, 20, 147, 0.3);
+}
+
+.touch-actions {
+  pointer-events: auto;
+}
+
+.touch-btn-jump {
+  width: 64px;
+  height: 64px;
+  font-size: 22px;
+  border-color: rgba(255, 215, 0, 0.5);
+  background: rgba(255, 215, 0, 0.12);
+}
+
+.touch-btn-jump:active,
+.touch-btn-jump.pressed {
+  background: rgba(255, 215, 0, 0.4);
+  border-color: rgba(255, 215, 0, 0.8);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+/* ── Mute Button ──────────────────────────────────────────── */
+#mute-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 35;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 105, 180, 0.3);
+  color: white;
+  font-size: 18px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+#mute-btn:hover {
+  background: rgba(255, 20, 147, 0.2);
+  border-color: rgba(255, 105, 180, 0.6);
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .game-title { font-size: 16px; }
+  .game-subtitle { font-size: 8px; }
+  .pixel-btn { font-size: 10px; padding: 12px 22px; }
+  .level-title { font-size: 14px; }
+  .memory-photo-frame { width: 160px; height: 160px; }
+  .memory-text { font-size: 7px; line-height: 1.9; }
+  .finale-letter { font-size: 7px; line-height: 2; padding: 14px; }
+  #control-hint { font-size: 6px; }
+  .touch-btn { width: 48px; height: 48px; font-size: 16px; }
+  .touch-btn-jump { width: 58px; height: 58px; font-size: 20px; }
+}
+
+@media (max-height: 500px) {
+  .game-title { font-size: 14px; }
+  .pixel-btn { padding: 10px 20px; font-size: 9px; }
+  .memory-photo-frame { width: 120px; height: 120px; }
+  .memory-text { font-size: 7px; }
+  .finale-letter { font-size: 7px; line-height: 1.8; }
+}
+
+@media (max-width: 380px) {
+  .game-title { font-size: 13px; }
+  .touch-btn { width: 44px; height: 44px; font-size: 14px; }
+  .touch-btn-jump { width: 52px; height: 52px; font-size: 18px; }
+  .touch-dpad { gap: 6px; }
+}
+
+/* ── Animations ───────────────────────────────────────────── */
+@keyframes heartPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    text-shadow:
+      0 0 20px rgba(255, 68, 102, 0.6),
+      0 0 40px rgba(255, 68, 102, 0.3),
+      0 3px 0 #CC2244;
+  }
+  50% {
+    text-shadow:
+      0 0 30px rgba(255, 68, 102, 0.8),
+      0 0 60px rgba(255, 68, 102, 0.5),
+      0 3px 0 #CC2244;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes buttonPop {
+  from { transform: translateY(10px) scale(0.8); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+@keyframes heartFall {
+  0% {
+    transform: translateY(-10vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% { opacity: 0.5; }
+  90% { opacity: 0.5; }
+  100% {
+    transform: translateY(105vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes zoomIn {
+  from { transform: scale(0.3); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes dotPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+}
+
+@keyframes borderGlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes loadingProgress {
+  0% { width: 0%; }
+  30% { width: 40%; }
+  60% { width: 70%; }
+  100% { width: 100%; }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes celebrate {
+  0% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-10px) scale(1.1); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}

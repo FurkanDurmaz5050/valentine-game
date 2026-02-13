@@ -1,0 +1,11 @@
+Bu klasöre anı fotoğraflarınızı ekleyin:
+
+- ani1.jpg → Bölüm 1: İlk Bakış
+- ani2.jpg → Bölüm 2: İlk Buluşma
+- ani3.jpg → Bölüm 3: İlk Öpücük
+- ani4.jpg → Bölüm 4: Sevgili Olduk
+- ani5.jpg → Bölüm 5: Maceralarımız
+- ani6.jpg → Bölüm 6: Sonsuza Dek
+
+Fotoğrafları bu isimlerle kaydedin.
+Kare formatta (1:1) en güzel görünür.

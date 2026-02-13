@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Furkan ❤️ Büşra — Aşk Macerası</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❤️</text></svg>">
+</head>
+<body>
+
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div class="loading-heart">💖</div>
+    <div class="loading-text">Aşk Yükleniyor...</div>
+    <div class="loading-bar-container">
+      <div class="loading-bar"></div>
+    </div>
+  </div>
+
+  <!-- Transition Overlay -->
+  <div id="transition-overlay"></div>
+
+  <!-- Game Container -->
+  <div id="game-container">
+
+    <!-- Game Canvas -->
+    <canvas id="game-canvas"></canvas>
+
+    <!-- Title Screen -->
+    <div id="title-screen">
+      <div class="hearts-rain" id="hearts-rain"></div>
+      <div class="title-content">
+        <h1 class="game-title">Furkan ❤️ Büşra</h1>
+        <p class="game-subtitle">Bizim Aşk Hikayemiz</p>
+        <button class="pixel-btn" id="start-btn">Maceraya Başla</button>
+        <p id="control-hint"></p>
+      </div>
+    </div>
+
+    <!-- Level Intro -->
+    <div id="level-intro">
+      <div class="level-intro-content">
+        <div id="progress-dots"></div>
+        <div class="level-chapter" id="level-chapter"></div>
+        <h2 class="level-title" id="level-title"></h2>
+        <p class="level-subtitle" id="level-subtitle"></p>
+      </div>
+    </div>
+
+    <!-- Memory Card -->
+    <div id="memory-card">
+      <div class="memory-card-content">
+        <div class="memory-photo-frame">
+          <img id="memory-photo" alt="Anı fotoğrafı">
+          <div id="memory-photo-placeholder">💕</div>
+        </div>
+        <h3 class="memory-title" id="memory-title"></h3>
+        <p class="memory-text" id="memory-text"></p>
+        <button class="pixel-btn visible" id="memory-continue-btn">Devam Et →</button>
+      </div>
+    </div>
+
+    <!-- Finale -->
+    <div id="finale">
+      <div class="finale-hearts-rain" id="finale-hearts-rain"></div>
+      <div class="finale-content">
+        <h2 class="finale-title">💕 Sana Mektubum 💕</h2>
+        <p class="finale-subtitle">Kalbimden Kaleme...</p>
+        <div class="finale-letter" id="finale-text"></div>
+        <button class="pixel-btn" id="replay-btn">Baştan Oyna 🔄</button>
+      </div>
+    </div>
+
+    <!-- HUD -->
+    <div id="hud">
+      <span id="hud-level"></span>
+      <div class="hud-right">
+        <span id="hearts-count">0/0</span>
+        <span id="hud-score">★ 0</span>
+      </div>
+    </div>
+
+    <!-- Touch Controls -->
+    <div id="touch-controls">
+      <div class="touch-dpad">
+        <button class="touch-btn" id="btn-left">◀</button>
+        <button class="touch-btn" id="btn-right">▶</button>
+      </div>
+      <div class="touch-actions">
+        <button class="touch-btn touch-btn-jump" id="btn-jump">▲</button>
+      </div>
+    </div>
+
+    <!-- Mute Button -->
+    <button id="mute-btn">🔊</button>
+  </div>
+
+  <!-- Scripts -->
+  <script src="story.js"></script>
+  <script src="sprites.js"></script>
+  <script src="audio.js"></script>
+  <script src="levels.js"></script>
+  <script src="game.js"></script>
+
+</body>
+</html>
