@@ -26,8 +26,13 @@ const GameConfig = (() => {
     originalLevelThemes = LEVELS.map(l => l.theme);
   }
 
-  // ─── localStorage I/O ────────────────────────────────────
+  // ─── Config I/O ──────────────────────────────────────────
   function load() {
+    // 1) user-config.js dosyasından (tüm cihazlarda geçerli)
+    if (typeof USER_CONFIG !== 'undefined' && USER_CONFIG !== null) {
+      return JSON.parse(JSON.stringify(USER_CONFIG));
+    }
+    // 2) localStorage fallback (anlık önizleme)
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       return raw ? JSON.parse(raw) : null;
@@ -35,13 +40,27 @@ const GameConfig = (() => {
   }
 
   function save(config) {
+    // localStorage'a kaydet (anlık önizleme)
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
-      return true;
-    } catch (e) {
-      alert('⚠️ Kaydetme başarısız! Resimler çok büyük olabilir.\nDaha küçük resimler deneyin.');
-      return false;
-    }
+    } catch (e) { /* ignore */ }
+    // user-config.js dosyasını indir (kalıcı kayıt)
+    downloadConfigFile(config);
+    return true;
+  }
+
+  function downloadConfigFile(config) {
+    const json = JSON.stringify(config, null, 2);
+    const content = `// ============================================================\n// user-config.js — Kullanıcı Özelleştirmeleri\n// ============================================================\n// Bu dosya ayar panelinden otomatik oluşturuldu.\n// Proje klasöründeki user-config.js yerine koyup GitHub'a push'la.\n// ============================================================\nconst USER_CONFIG = ${json};\n`;
+    const blob = new Blob([content], { type: 'application/javascript' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'user-config.js';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
 
   // ─── Apply config to STORY, LEVELS, DOM ──────────────────
@@ -449,7 +468,7 @@ const GameConfig = (() => {
     if (save(config)) {
       apply(config);
       closePanel();
-      showToast('✅ Ayarlar kaydedildi!');
+      showToast('✅ Kaydedildi! İndirilen user-config.js dosyasını projeye koy ve push\'la.');
     }
   }
 
